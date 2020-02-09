@@ -26,7 +26,7 @@ void main() {
     test('get an album\'s tracks', () async {
       var a = await spotify.albumTracksGet('7eyQXxuf2nGj9d2367Gi5f');
 
-      expect(10, a.items.length);
+      expect(a.items.length, 10);
       expect(a.items[0].name, '15 Step');
     });
 
@@ -37,8 +37,9 @@ void main() {
         offset: 4,
       );
 
-      expect(2, a.items.length);
+      expect(a.items.length, 2);
       expect(a.items[0].name, 'All I Need');
+      expect(a.items[1].name, 'Faust Arp');
     });
 
     test('get several albums', () async {
@@ -46,8 +47,62 @@ void main() {
         '7eyQXxuf2nGj9d2367Gi5f',
         '19RUXBFyM4PpmrLRdtqWbp',
       ]);
+
+      expect(as.albums.length, 2);
       expect(as.albums[0].name, 'In Rainbows');
       expect(as.albums[1].name, 'Kid A');
+    });
+  });
+
+  group('artists', () {
+    test('get an artist', () async {
+      var a = await spotify.artistGet('4Z8W4fKeB5YxbusRsdQVPb');
+
+      expect(a.name, 'Radiohead');
+    });
+
+    test('get an artists\'s albums', () async {
+      var a = await spotify.artistAlbumsGet('4Z8W4fKeB5YxbusRsdQVPb');
+
+      expect(a.items.length, 20);
+      expect(a.items[0].name, 'OK Computer OKNOTOK 1997 2017');
+    });
+
+    test('get an artists\'s albums pagination', () async {
+      var a = await spotify.artistAlbumsGet(
+        '4Z8W4fKeB5YxbusRsdQVPb',
+        limit: 2,
+        offset: 11,
+      );
+
+      expect(a.items.length, 2);
+      expect(a.items[0].name, 'The Bends');
+      expect(a.items[1].name, 'Pablo Honey');
+    });
+
+    test('get an artists\'s related artists', () async {
+      var a = await spotify.artistRelatedArtistsGet('4Z8W4fKeB5YxbusRsdQVPb');
+
+      expect(a.artists.length, 20);
+      expect(a.artists[0].name, 'Blur');
+    });
+
+    test('get an artists\'s top tracks', () async {
+      var a = await spotify.artistTopTracksGet('4Z8W4fKeB5YxbusRsdQVPb');
+
+      expect(a.tracks.length, 10);
+      expect(a.tracks[0].name, 'Creep');
+    });
+
+    test('get several artists', () async {
+      var as = await spotify.artistsGet([
+        '4Z8W4fKeB5YxbusRsdQVPb',
+        '0oSGxfWSnnOXhD2fKuz2Gy',
+      ]);
+
+      expect(as.artists.length, 2);
+      expect(as.artists[0].name, 'Radiohead');
+      expect(as.artists[1].name, 'David Bowie');
     });
   });
 

@@ -86,6 +86,65 @@ class Spotify {
     return MultipleAlbumsResponse.fromJson(json.decode(res.body));
   }
 
+  Future<SingleArtistResponse> artistGet(String artistId) async {
+    var uri = Uri.https('api.spotify.com', 'v1/artists/$artistId');
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return SingleArtistResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<ArtistsAlbumsResponse> artistAlbumsGet(
+    String artistId, {
+    int limit,
+    int offset,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/artists/$artistId/albums', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return ArtistsAlbumsResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<ArtistsRelatedArtistsResponse> artistRelatedArtistsGet(
+    String artistId,
+  ) async {
+    var uri =
+        Uri.https('api.spotify.com', 'v1/artists/$artistId/related-artists');
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return ArtistsRelatedArtistsResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<ArtistsTopTracksResponse> artistTopTracksGet(String artistId) async {
+    var uri = Uri.https('api.spotify.com', 'v1/artists/$artistId/top-tracks', {
+      'country': 'US',
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return ArtistsTopTracksResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<MultipleArtistsResponse> artistsGet(List<String> artistIds) async {
+    var uri = Uri.https('api.spotify.com', 'v1/artists', {
+      'ids': artistIds.join(','),
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return MultipleArtistsResponse.fromJson(json.decode(res.body));
+  }
+
   Future<PlaylistObjectFull> playlistGet(String playlistId) async {
     var res = await client.get(
       'https://api.spotify.com/v1/playlists/$playlistId',
