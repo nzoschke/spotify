@@ -6,3 +6,12 @@
 4. Remove `interface AudioAnalysisResponse`
 5. Paste into [QuickType](https://app.quicktype.io/)
 6. Click "Copy Code" and paste into `models.dart`
+
+## Todo
+
+- Token refresh
+- Country
+- Error handling
+- Player types
+- Default limits
+- Comments to docs on client function methods
