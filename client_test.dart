@@ -15,6 +15,28 @@ void main() {
 
   test('creds seed', () {});
 
+  // https://developer.spotify.com/console/albums/
+  group('albums', () {
+    test('get an album', () async {
+      var a = await spotify.albumGet('7eyQXxuf2nGj9d2367Gi5f');
+      expect(a.name, 'In Rainbows');
+    });
+
+    test('get an album\'s tracks', () async {
+      var a = await spotify.albumTracksGet('7eyQXxuf2nGj9d2367Gi5f');
+      expect(a.items[0].name, '15 Step');
+    });
+
+    test('get several albums', () async {
+      var as = await spotify.albumsGet([
+        '7eyQXxuf2nGj9d2367Gi5f',
+        '19RUXBFyM4PpmrLRdtqWbp',
+      ]);
+      expect(as.albums[0].name, 'In Rainbows');
+      expect(as.albums[1].name, 'Kid A');
+    });
+  });
+
   test('playlistGet', () async {
     var p = await spotify.playlistGet('3YKmPXq3sYBB4BkSHf8SAZ');
     // expectJSON(p, PlaylistObjectFull(name: 'hello'));

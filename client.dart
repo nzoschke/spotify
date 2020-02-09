@@ -50,6 +50,35 @@ class Spotify {
     credentialsFile.writeAsStringSync(client.credentials.toJson());
   }
 
+  Future<AlbumObjectFull> albumGet(String albumId) async {
+    var uri = Uri.https('api.spotify.com', 'v1/albums/$albumId');
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return AlbumObjectFull.fromJson(json.decode(res.body));
+  }
+
+  Future<AlbumTracksResponse> albumTracksGet(String albumId) async {
+    var uri = Uri.https('api.spotify.com', 'v1/albums/$albumId/tracks');
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return AlbumTracksResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<MultipleAlbumsResponse> albumsGet(List<String> albumIds) async {
+    var uri = Uri.https('api.spotify.com', 'v1/albums', {
+      'ids': albumIds.join(','),
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return MultipleAlbumsResponse.fromJson(json.decode(res.body));
+  }
+
   Future<PlaylistObjectFull> playlistGet(String playlistId) async {
     var res = await client.get(
       'https://api.spotify.com/v1/playlists/$playlistId',
