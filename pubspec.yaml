@@ -1,0 +1,5 @@
+name: spotify
+dependencies:
+  oauth2: 1.5.0
+dev_dependencies:
+  test: 1.12.0
