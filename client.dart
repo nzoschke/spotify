@@ -146,10 +146,11 @@ class Spotify {
   }
 
   Future<PlaylistObjectFull> playlistGet(String playlistId) async {
-    var res = await client.get(
-      'https://api.spotify.com/v1/playlists/$playlistId',
-    );
+    var uri = Uri.https('api.spotify.com', 'v1/playlists/$playlistId');
+
+    var res = await client.get(uri);
     credentialsSave();
+
     return PlaylistObjectFull.fromJson(json.decode(res.body));
   }
 
@@ -201,10 +202,20 @@ class Spotify {
   }
 
   Future<CurrentUsersProfileResponse> userCurrentGet() async {
-    var res = await client.get(
-      'https://api.spotify.com/v1/me',
-    );
+    var uri = Uri.https('api.spotify.com', 'v1/me');
+
+    var res = await client.get(uri);
     credentialsSave();
+
     return CurrentUsersProfileResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<UserProfileResponse> userGet(String userId) async {
+    var uri = Uri.https('api.spotify.com', 'v1/users/$userId');
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return UserProfileResponse.fromJson(json.decode(res.body));
   }
 }
