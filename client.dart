@@ -153,6 +153,53 @@ class Spotify {
     return PlaylistObjectFull.fromJson(json.decode(res.body));
   }
 
+  Future<PlaylistTrackResponse> playlistTracksGet(
+    String playlistId, {
+    int limit,
+    int offset,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/playlists/$playlistId/tracks', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return PlaylistTrackResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<ListOfCurrentUsersPlaylistsResponse> playlistsCurrentUser({
+    int limit,
+    int offset,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/me/playlists', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return ListOfCurrentUsersPlaylistsResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<ListOfUsersPlaylistsResponse> playlistsUser(
+    String userId, {
+    int limit,
+    int offset,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/users/$userId/playlists', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+    });
+
+    var res = await client.get(uri);
+    credentialsSave();
+
+    return ListOfUsersPlaylistsResponse.fromJson(json.decode(res.body));
+  }
+
   Future<CurrentUsersProfileResponse> userCurrentGet() async {
     var res = await client.get(
       'https://api.spotify.com/v1/me',

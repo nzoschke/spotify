@@ -106,10 +106,55 @@ void main() {
     });
   });
 
-  test('playlistGet', () async {
-    var p = await spotify.playlistGet('3YKmPXq3sYBB4BkSHf8SAZ');
-    // expectJSON(p, PlaylistObjectFull(name: 'hello'));
-    expect(p.name, 'JukeLab 101');
+  group('browse', () {});
+
+  group('follow', () {});
+
+  group('library', () {});
+
+  group('personalization', () {});
+
+  group('player', () {});
+
+  group('playlists', () {
+    test('get a playlist', () async {
+      var p = await spotify.playlistGet('3YKmPXq3sYBB4BkSHf8SAZ');
+
+      expect(p.name, 'JukeLab 101');
+    });
+
+    test('get a playlist\'s tracks', () async {
+      var p = await spotify.playlistTracksGet('3YKmPXq3sYBB4BkSHf8SAZ');
+
+      expect(p.items[0].track.name, '15 Step');
+    });
+
+    test('get a playlist\'s tracks pagination', () async {
+      var p = await spotify.playlistTracksGet(
+        '3YKmPXq3sYBB4BkSHf8SAZ',
+        limit: 2,
+        offset: 28,
+      );
+
+      expect(p.items.length, 2);
+      expect(p.items[0].track.name, 'Five Years - 2012 Remaster');
+      expect(p.items[1].track.name, 'Soul Love - 2012 Remaster');
+    });
+
+    test('get a list of current user\'s playlists', () async {
+      var ps = await spotify.playlistsCurrentUser();
+
+      expect(ps.items.length, 20);
+      expect(ps.items[0].name, 'Modern Acid');
+    });
+
+    test('get a list of a user\'s playlists', () async {
+      var ps = await spotify.playlistsUser('bxsl6x8wzzcbtbkwquzpcqz74');
+
+      expect(ps.items.length, 2);
+      expect(ps.items[0].name, 'JukeLab 103');
+      expect(ps.items[1].name, 'JukeLab 101');
+    });
   });
 
   test('userCurrentGet', () async {
