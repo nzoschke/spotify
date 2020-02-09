@@ -59,8 +59,15 @@ class Spotify {
     return AlbumObjectFull.fromJson(json.decode(res.body));
   }
 
-  Future<AlbumTracksResponse> albumTracksGet(String albumId) async {
-    var uri = Uri.https('api.spotify.com', 'v1/albums/$albumId/tracks');
+  Future<AlbumTracksResponse> albumTracksGet(
+    String albumId, {
+    int limit,
+    int offset,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/albums/$albumId/tracks', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+    });
 
     var res = await client.get(uri);
     credentialsSave();

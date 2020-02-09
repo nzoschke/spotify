@@ -19,12 +19,26 @@ void main() {
   group('albums', () {
     test('get an album', () async {
       var a = await spotify.albumGet('7eyQXxuf2nGj9d2367Gi5f');
+
       expect(a.name, 'In Rainbows');
     });
 
     test('get an album\'s tracks', () async {
       var a = await spotify.albumTracksGet('7eyQXxuf2nGj9d2367Gi5f');
+
+      expect(10, a.items.length);
       expect(a.items[0].name, '15 Step');
+    });
+
+    test('get an album\'s tracks pagination', () async {
+      var a = await spotify.albumTracksGet(
+        '7eyQXxuf2nGj9d2367Gi5f',
+        limit: 2,
+        offset: 4,
+      );
+
+      expect(2, a.items.length);
+      expect(a.items[0].name, 'All I Need');
     });
 
     test('get several albums', () async {
