@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'models.dart';
 
@@ -46,6 +47,25 @@ class Spotify {
   String _accessToken;
   String _refreshToken;
 
+  /// clientGet performs a GET with refresh and credential save semantics
+  Future<http.Response> clientGet(
+    dynamic url, {
+    Map<String, String> headers,
+  }) async {
+    http.Response res;
+
+    try {
+      res = await client.get(url, headers: headers);
+    } on oauth2.AuthorizationException {
+      await client.refreshCredentials();
+      credentialsSave();
+
+      res = await client.get(url, headers: headers);
+    }
+
+    return res;
+  }
+
   void credentialsSave() {
     credentialsFile.writeAsStringSync(client.credentials.toJson());
   }
@@ -53,8 +73,7 @@ class Spotify {
   Future<AlbumObjectFull> albumGet(String albumId) async {
     var uri = Uri.https('api.spotify.com', 'v1/albums/$albumId');
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return AlbumObjectFull.fromJson(json.decode(res.body));
   }
@@ -69,8 +88,7 @@ class Spotify {
       'offset': (offset ?? 0).toString(),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return AlbumTracksResponse.fromJson(json.decode(res.body));
   }
@@ -80,8 +98,7 @@ class Spotify {
       'ids': albumIds.join(','),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return MultipleAlbumsResponse.fromJson(json.decode(res.body));
   }
@@ -89,8 +106,7 @@ class Spotify {
   Future<SingleArtistResponse> artistGet(String artistId) async {
     var uri = Uri.https('api.spotify.com', 'v1/artists/$artistId');
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return SingleArtistResponse.fromJson(json.decode(res.body));
   }
@@ -105,8 +121,7 @@ class Spotify {
       'offset': (offset ?? 0).toString(),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return ArtistsAlbumsResponse.fromJson(json.decode(res.body));
   }
@@ -117,8 +132,7 @@ class Spotify {
     var uri =
         Uri.https('api.spotify.com', 'v1/artists/$artistId/related-artists');
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return ArtistsRelatedArtistsResponse.fromJson(json.decode(res.body));
   }
@@ -128,8 +142,7 @@ class Spotify {
       'country': 'US',
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return ArtistsTopTracksResponse.fromJson(json.decode(res.body));
   }
@@ -139,8 +152,7 @@ class Spotify {
       'ids': artistIds.join(','),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return MultipleArtistsResponse.fromJson(json.decode(res.body));
   }
@@ -148,8 +160,7 @@ class Spotify {
   Future<PlaylistObjectFull> playlistGet(String playlistId) async {
     var uri = Uri.https('api.spotify.com', 'v1/playlists/$playlistId');
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return PlaylistObjectFull.fromJson(json.decode(res.body));
   }
@@ -164,8 +175,7 @@ class Spotify {
       'offset': (offset ?? 0).toString(),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return PlaylistTrackResponse.fromJson(json.decode(res.body));
   }
@@ -179,8 +189,7 @@ class Spotify {
       'offset': (offset ?? 0).toString(),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return ListOfCurrentUsersPlaylistsResponse.fromJson(json.decode(res.body));
   }
@@ -195,8 +204,7 @@ class Spotify {
       'offset': (offset ?? 0).toString(),
     });
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return ListOfUsersPlaylistsResponse.fromJson(json.decode(res.body));
   }
@@ -204,8 +212,7 @@ class Spotify {
   Future<CurrentUsersProfileResponse> userCurrentGet() async {
     var uri = Uri.https('api.spotify.com', 'v1/me');
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return CurrentUsersProfileResponse.fromJson(json.decode(res.body));
   }
@@ -213,8 +220,7 @@ class Spotify {
   Future<UserProfileResponse> userGet(String userId) async {
     var uri = Uri.https('api.spotify.com', 'v1/users/$userId');
 
-    var res = await client.get(uri);
-    credentialsSave();
+    var res = await clientGet(uri);
 
     return UserProfileResponse.fromJson(json.decode(res.body));
   }
