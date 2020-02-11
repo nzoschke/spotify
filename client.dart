@@ -60,6 +60,24 @@ class Spotify {
   String _accessToken;
   String _refreshToken;
 
+  /// clientDelete performs a DELETE with refresh and credential save semantics
+  Future<http.Response> clientDelete(
+    dynamic url, {
+    Map<String, String> headers,
+  }) async {
+    http.Response res;
+
+    try {
+      res = await client.delete(url, headers: headers);
+    } on oauth2.AuthorizationException {
+      await clientRefresh();
+
+      res = await client.delete(url, headers: headers);
+    }
+
+    return res;
+  }
+
   /// clientGet performs a GET with refresh and credential save semantics
   Future<http.Response> clientGet(
     dynamic url, {
@@ -231,6 +249,35 @@ class Spotify {
     return MultipleArtistsResponse.fromJson(json.decode(res.body));
   }
 
+  Future<CreatePlaylistResponse> playlistCreate(
+    String userId,
+    String name, {
+    bool public,
+    bool collaborative,
+    String description,
+  }) async {
+    var body = json.encode({
+      'name': name,
+      'public': public ?? true,
+      'collaborative': collaborative ?? false,
+      'description': description,
+    });
+
+    var headers = {
+      'Content-type': 'application/json',
+    };
+
+    var uri = Uri.https('api.spotify.com', 'v1/users/$userId/playlists');
+
+    var res = await clientPost(
+      uri,
+      body: body,
+      headers: headers,
+    );
+
+    return CreatePlaylistResponse.fromJson(json.decode(res.body));
+  }
+
   Future<PlaylistObjectFull> playlistGet(String playlistId) async {
     var uri = Uri.https('api.spotify.com', 'v1/playlists/$playlistId');
 
@@ -252,6 +299,17 @@ class Spotify {
     var res = await clientGet(uri);
 
     return PlaylistTrackResponse.fromJson(json.decode(res.body));
+  }
+
+  Future playlistUnfollow(String playlistId) async {
+    var uri = Uri.https(
+      'api.spotify.com',
+      'v1/playlists/$playlistId/followers',
+    );
+
+    await clientDelete(
+      uri,
+    );
   }
 
   Future<ListOfCurrentUsersPlaylistsResponse> playlistsCurrentUser({

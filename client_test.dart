@@ -125,6 +125,8 @@ void main() {
   group('player', () {});
 
   group('playlists', () {
+    String pId;
+
     test('get a playlist', () async {
       var p = await spotify.playlistGet('3YKmPXq3sYBB4BkSHf8SAZ');
 
@@ -163,6 +165,24 @@ void main() {
       expect(ps.items[0].name, 'JukeLab 103');
       expect(ps.items[1].name, 'JukeLab 101');
     });
+
+    test('create a playlist', () async {
+      var p = await spotify.playlistCreate('nzoschke', 'Dart Test');
+
+      pId = p.id;
+
+      expect(p.name, 'Dart Test');
+    });
+
+    test('unfollow a playlist', () async {
+      await spotify.playlistUnfollow(pId);
+    });
+
+    test('change a playlist\' details', () async {});
+    test('add tracks to a playlist', () async {});
+    test('reorder a playlist\'s tracks', () async {});
+    test('remove tracks from a playlist', () async {});
+    test('replace a playlist\'s tracks', () async {});
   });
 
   group('users', () {
