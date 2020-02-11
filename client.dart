@@ -70,8 +70,7 @@ class Spotify {
     try {
       res = await client.get(url, headers: headers);
     } on oauth2.AuthorizationException {
-      await client.refreshCredentials();
-      credentialsSave();
+      await clientRefresh();
 
       res = await client.get(url, headers: headers);
     }
@@ -79,7 +78,69 @@ class Spotify {
     return res;
   }
 
-  void credentialsSave() {
+  /// clientPost performs a POST with refresh and credential save semantics
+  Future<http.Response> clientPost(
+    dynamic url, {
+    Map<String, String> headers,
+    dynamic body,
+    Encoding encoding,
+  }) async {
+    http.Response res;
+
+    try {
+      res = await client.post(
+        url,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      );
+    } on oauth2.AuthorizationException {
+      await clientRefresh();
+
+      res = await client.post(
+        url,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      );
+    }
+
+    return res;
+  }
+
+  /// clientPut performs a PUT with refresh and credential save semantics
+  Future<http.Response> clientPut(
+    dynamic url, {
+    Map<String, String> headers,
+    dynamic body,
+    Encoding encoding,
+  }) async {
+    http.Response res;
+
+    try {
+      res = await client.put(
+        url,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      );
+    } on oauth2.AuthorizationException {
+      await clientRefresh();
+
+      res = await client.put(
+        url,
+        headers: headers,
+        body: body,
+        encoding: encoding,
+      );
+    }
+
+    return res;
+  }
+
+  /// clientRefresh refreshes and saves the new token
+  Future clientRefresh() async {
+    await client.refreshCredentials();
     credentialsFile.writeAsStringSync(client.credentials.toJson());
   }
 
