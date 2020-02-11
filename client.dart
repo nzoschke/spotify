@@ -6,12 +6,14 @@ import 'models.dart';
 
 class Spotify {
   Spotify(
+    this.clientPath,
     this.credentialsPath, {
     clientId,
     clientSecret,
     accessToken,
     refreshToken,
   }) {
+    clientFile = File(clientPath);
     credentialsFile = File(credentialsPath);
 
     _clientId = clientId;
@@ -30,6 +32,14 @@ class Spotify {
       creds = oauth2.Credentials.fromJson(credentialsFile.readAsStringSync());
     }
 
+    exists = clientFile.existsSync();
+    if (exists) {
+      var c = json.decode(clientFile.readAsStringSync());
+
+      _clientId = c['clientId'];
+      _clientSecret = c['clientSecret'];
+    }
+
     client = oauth2.Client(
       creds,
       identifier: _clientId,
@@ -38,6 +48,9 @@ class Spotify {
   }
 
   oauth2.Client client;
+
+  final String clientPath;
+  File clientFile;
 
   final String credentialsPath;
   File credentialsFile;

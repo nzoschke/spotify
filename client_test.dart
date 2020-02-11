@@ -1,19 +1,27 @@
 import 'package:test/test.dart';
 import 'client.dart';
-import 'models.dart';
 
 void main() {
   var spotify = Spotify(
-    'creds.json',
+    '.testclient.json',
+    '.testcreds.json',
   );
 
   test('creds load missing', () {
-    var s = Spotify('missingcreds.json');
+    var s = Spotify('.missingclient.json', '.missingcreds.json');
+
+    expect(s.client.identifier, null);
+    expect(s.client.secret, null);
     expect(s.client.credentials.accessToken, null);
     expect(s.client.credentials.refreshToken, null);
   });
 
-  test('creds seed', () {});
+  test('creds seed', () {
+    expect(spotify.client.identifier, isNotNull);
+    expect(spotify.client.secret, isNotNull);
+    expect(spotify.client.credentials.accessToken, isNotNull);
+    expect(spotify.client.credentials.refreshToken, isNotNull);
+  });
 
   // https://developer.spotify.com/console/albums/
   group('albums', () {
