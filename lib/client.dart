@@ -205,13 +205,20 @@ class Spotify {
 
   Future<ArtistsAlbumsResponse> artistAlbumsGet(
     String artistId, {
+    List<String> includeGroups,
     int limit,
     int offset,
   }) async {
-    var uri = Uri.https('api.spotify.com', 'v1/artists/$artistId/albums', {
+    var query = {
       'limit': (limit ?? 20).toString(),
       'offset': (offset ?? 0).toString(),
-    });
+    };
+
+    if (includeGroups != null) {
+      query['include_groups'] = includeGroups.join(',');
+    }
+
+    var uri = Uri.https('api.spotify.com', 'v1/artists/$artistId/albums', query);
 
     var res = await clientGet(uri);
 
@@ -371,6 +378,16 @@ class Spotify {
     var res = await clientGet(uri);
 
     return UsersTopTracksResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<MultipleTracksResponse> tracksGet(List<String> trackIds) async {
+    var uri = Uri.https('api.spotify.com', 'v1/tracks', {
+      'ids': trackIds.join(','),
+    });
+
+    var res = await clientGet(uri);
+
+    return MultipleTracksResponse.fromJson(json.decode(res.body));
   }
 
   Future<CurrentUsersProfileResponse> userCurrentGet() async {
