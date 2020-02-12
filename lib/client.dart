@@ -341,6 +341,38 @@ class Spotify {
     return ListOfUsersPlaylistsResponse.fromJson(json.decode(res.body));
   }
 
+  Future<UsersTopArtistsResponse> topArtists({
+    int limit,
+    int offset,
+    String timeRange,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/me/top/artists', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+      'time_range': timeRange ?? 'medium_term',
+    });
+
+    var res = await clientGet(uri);
+
+    return UsersTopArtistsResponse.fromJson(json.decode(res.body));
+  }
+
+  Future<UsersTopTracksResponse> topTracks({
+    int limit,
+    int offset,
+    String timeRange,
+  }) async {
+    var uri = Uri.https('api.spotify.com', 'v1/me/top/tracks', {
+      'limit': (limit ?? 20).toString(),
+      'offset': (offset ?? 0).toString(),
+      'time_range': timeRange ?? 'medium_term',
+    });
+
+    var res = await clientGet(uri);
+
+    return UsersTopTracksResponse.fromJson(json.decode(res.body));
+  }
+
   Future<CurrentUsersProfileResponse> userCurrentGet() async {
     var uri = Uri.https('api.spotify.com', 'v1/me');
 

@@ -92,7 +92,7 @@ void main() {
       var a = await spotify.artistRelatedArtistsGet('4Z8W4fKeB5YxbusRsdQVPb');
 
       expect(a.artists.length, 20);
-      expect(a.artists[0].name, 'Blur');
+      expect(a.artists[0].name, 'Thom Yorke');
     });
 
     test('get an artists\'s top tracks', () async {
@@ -120,7 +120,21 @@ void main() {
 
   group('library', () {});
 
-  group('personalization', () {});
+  group('personalization', () {
+    test('Get a User\'s Top Artists', () async {
+      var t = await spotify.topArtists();
+
+      expect(t.items.length, 20);
+      expect(t.items[0].name, 'Boy Harsher');
+    });
+
+    test('Get a User\'s Top Tracks', () async {
+      var t = await spotify.topTracks();
+
+      expect(t.items.length, 20);
+      expect(t.items[0].name, 'A Realness');
+    });
+  });
 
   group('player', () {});
 
